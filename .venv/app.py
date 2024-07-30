@@ -7,28 +7,27 @@ from datetime import datetime
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:parsa123@localhost/our_users' #mysql://username:password@localhost/db_name
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = 'somepassword'  # don't push this to GitHub
+app.config['SECRET_KEY'] = 'somepassword'  # Don't push this to GitHub
 db = SQLAlchemy(app)
-
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, nullable=False)
-    email = db.Column(db.String, nullable=False)
+    name = db.Column(db.String(100), nullable=False)  # Specify length for MySQL VARCHAR
+    email = db.Column(db.String(100), nullable=False)  # Specify length for MySQL VARCHAR
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __str__(self) -> str:
         return f'user id: {self.id}, name: {self.name}, email: {self.email}, date_added: {self.date_added}'
-
 
 class UserForm(FlaskForm):
     name = StringField('What\'s your name?', validators=[DataRequired()])
     email = StringField('What\'s your Email?', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
-class namerform(FlaskForm):
+class NamerForm(FlaskForm):
     name = StringField('What\'s your name?', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
@@ -62,23 +61,22 @@ def add_user():
     name = None
     form = UserForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(email = form.email.data).first()
+        user = User.query.filter_by(email=form.email.data).first()
         if user is None:
-            user = User(name = form.name.data, email = form.email.data)
+            user = User(name=form.name.data, email=form.email.data)
             db.session.add(user)
             db.session.commit()
         name = form.name.data
         form.name.data = ''
         form.email.data = ''
-        flash('user added!')
+        flash('User added!')
     our_users = User.query.order_by(User.date_added)
-    return render_template('add_user.html', form=form, name = name, our_users = our_users)
-
+    return render_template('add_user.html', form=form, name=name, our_users=our_users)
 
 @app.route('/name', methods=['POST', 'GET'])
 def name():
     name = None
-    form = namerform()
+    form = NamerForm()
     if form.validate_on_submit():
         name = form.name.data
         form.name.data = ''
