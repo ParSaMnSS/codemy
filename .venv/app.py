@@ -19,6 +19,12 @@ class User(db.Model):
     email = db.Column(db.String(100), nullable=False)  # Specify length for MySQL VARCHAR
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
 
+    # def __init__(self, id, emai, date_added) -> None:
+    #     self.id = id
+    #     self.name = name
+    #     self.email = emai
+    #     self.date_added = date_added
+
     def __str__(self) -> str:
         return f'user id: {self.id}, name: {self.name}, email: {self.email}, date_added: {self.date_added}'
 
