@@ -2,6 +2,8 @@ from flask import Flask, render_template, flash, request, redirect, url_for, ses
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
+from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 
 
 app = Flask(__name__)
@@ -32,6 +34,10 @@ def page_not_found(e):
 @app.errorhandler(500)
 def page_not_found(e):
     return render_template('500.html'), 500
+
+@app.route('/user/add', methods = ['GET', 'POST'])
+def add_user():
+    return render_template('add_user.html')
 
 
 @app.route('/name', methods = ['POST', 'GET'])
