@@ -13,17 +13,12 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'somepassword'  # Don't push this to GitHub
 db = SQLAlchemy(app)
 
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)  # Specify length for MySQL VARCHAR
     email = db.Column(db.String(100), nullable=False)  # Specify length for MySQL VARCHAR
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
-
-    # def __init__(self, id, emai, date_added) -> None:
-    #     self.id = id
-    #     self.name = name
-    #     self.email = emai
-    #     self.date_added = date_added
 
     def __str__(self) -> str:
         return f'user id: {self.id}, name: {self.name}, email: {self.email}, date_added: {self.date_added}'
@@ -37,6 +32,26 @@ class NamerForm(FlaskForm):
     name = StringField('What\'s your name?', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
+
+# Update database record
+
+@app.route('/update/<int:id>', methods = ['GET', 'POST'])
+def update(id):
+    form = UserForm()
+    name_to_update = User.query.get_or_404(id)
+    if request.method == 'POST':
+        name_to_update.name = request.form['name']
+        name_to_update.email = request.form['email']
+        try:
+            db.session.commit()
+            flash('user updated!')
+            return render_template('update.html', form = form, name_to_update = name_to_update)
+        except:
+            flash('Error, looks like there was a problem, try again!')
+            return render_template('update.html', form = form, name_to_update = name_to_update)
+    else:
+        return render_template('update.html', form = form, name_to_update = name_to_update)
+        
 
 @app.route('/')
 def index():
