@@ -14,6 +14,10 @@ def index():
 def user(name):
     return render_template('user.html', username = name)
 
+@app.route('/homelander')
+def homelander():
+    return 'homelander'
+
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
@@ -23,5 +27,6 @@ def page_not_found(e):
 def page_not_found(e):
     return render_template('500.html'), 500
 
+# oooooo
 if __name__ == '__main__':
     app.run(debug=True)
