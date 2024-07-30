@@ -1,0 +1,10 @@
+<h1>Hello Index</h1>
+<p>my name is {{firstname | title}} </p>
+<p>{{stuff | safe}}</p>
+<h3>Fav pizza</h3>
+{% for topping in fav_pizza %}
+    {{topping}} <br>
+{% endfor %}
+
+<br>
+{{fav_pizza.0}}
