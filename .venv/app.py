@@ -1,7 +1,8 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, flash, request, redirect, url_for, session
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'somepassword' #dont push it to github
@@ -16,17 +17,13 @@ class NamerForm(FlaskForm):
 def index():
     firstname = 'john'
     stuff = 'this is <strong>Bold</strong>'
-
+    flash('Welcome to our website')
     fav_pizza = ['pep', 'mush', 'cheese']
     return render_template('index.html', firstname = firstname, stuff = stuff, fav_pizza = fav_pizza)
 
 @app.route('/user/<name>')
 def user(name):
     return render_template('user.html', username = name)
-
-@app.route('/homelander')
-def homelander():
-    return 'homelander'
 
 @app.errorhandler(404)
 def page_not_found(e):
@@ -44,6 +41,8 @@ def name():
     if form.validate_on_submit():
         name = form.name.data
         form.name.data = ''
+        flash('Form Submitted!')
+
     return render_template('name.html', name = name, form = form)
 
 if __name__ == '__main__':
